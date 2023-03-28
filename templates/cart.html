@@ -1,0 +1,104 @@
+{%extends 'base.html'%}
+{%block content%}
+
+
+    <section class="h-100 h-custom">
+      <div class="container h-100 py-5 w-500">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+          <div class="col">
+    
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col" class="h5">Your cart: <span id="cart-qty">{{cart|length}}</span></th>
+                    <th class="align-middle" scope="col">Quantity</th>
+                    <th scope="col">Discount</th>
+                    <th scope="col">Price</th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for item in cart %}
+                  {% with product=item.product %}    
+                  <tr class="cart-product" data-index="{{product.itemid}}">
+                    {%csrf_token%}
+                    <th scope="row">
+                      <div class="d-flex align-items-center">
+                        <img src="https://cf.shopee.vn/file/{{product.avatar}}" class="img-fluid rounded-3"
+                          style="width: 100px;" alt="Book">
+                        <div class="flex-column ms-4 py-1 px-1">
+                          <p class="mb-2"><a href="{{product.get_absolute_url}}">{{product.name}}</a></p>
+                        </div>
+                      </div>
+                    </th>
+                    <td class="align-middle">
+                      
+                      <p class="mb-0" style="font-weight: 500;">{{item.qty}} <br>
+                        <span style="-webkit-text-fill-color: blueviolet;">Stock: {{product.stock}}</span></p>
+                      
+                    </td>
+                    <td class="align-middle">
+                      <div class="d-flex flex-row">
+                        <p class="mb-0" style="font-weight: 500;">{{product.show_discount}}%</p>
+                      </div>
+                    </td>
+                    <td class="align-middle">
+                      <p class="mb-0" style="font-weight: 500;">
+                        {%if product.show_discount == 0 %}
+                        {{product.price}} đ
+                        {%else%}
+                        <del>{{product.price_before_discount}}</del><br>
+                        {{product.price}} đ
+                        {%endif%}
+                      </p>
+                    </td>
+                    <td class="align-middle"><button class="cart-del" id="delete-button" data-index="{{product.itemid}}" onclick="">
+                      del</button></td>
+                  </tr>
+                  {% endwith %}
+                  {% endfor %}
+                  
+                </tbody>
+              </table>
+            </div>
+    
+            <button type="button" class="btn btn-primary btn-block btn-lg">
+              <div class="d-flex justify-content-between">
+                
+                <span></span>
+                <span id="subtotal">{{cart.get_total_price}}</span>
+              </div>
+              </button>
+    
+          </div>
+        </div>
+      </div>
+    </section>
+    <script>
+      // Delete Item
+      $('.cart-product').on('click', '#delete-button', function (e) {
+        e.preventDefault();
+        data = $(this).data();
+        prodid = data.index;
+        $.ajax({
+          type: 'POST',
+          url: '{% url "cart:cartdel" %}',
+          data: {
+            itemid: prodid,
+            csrfmiddlewaretoken: "{{csrf_token}}",
+            action: 'post'
+          },
+          success: function (json) {
+            $('.cart-product[data-index="' + prodid + '"]').remove();
+            document.getElementById("subtotal").innerHTML = json.total;
+            document.getElementById("cart-qty").innerHTML = json.qty
+          },
+          error: function (xhr, errmsg, err) {}
+        });
+      })
+    
+     
+    </script>
+
+{%endblock%}

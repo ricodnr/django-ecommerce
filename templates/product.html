@@ -1,0 +1,167 @@
+{%extends 'base.html'%}
+{%load customtag%}
+{%block content%}
+
+  <!-- product section -->
+
+  <section class="py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="row gx-4 gx-lg-5 align-items-center">
+            <div class="col-md-6">
+
+                <div class="ecommerce-gallery" data-mdb-zoom-effect="true" data-mdb-auto-height="true">
+                    <div class="row py-3 shadow-5">
+                      <div class="col-12 mb-1">
+                        <div class="lightbox">
+                          <img
+                            id="expandedImg"
+                            src="https://cf.shopee.vn/file/{{object.avatar}}"
+                            alt="Gallery image 1"
+                            class="ecommerce-gallery-main-img active w-100"
+                          />
+                        </div>
+                      </div>
+                      
+                    </div>
+                  </div>
+            </div>
+            <div class="col-md-6">
+                <h3 class="display-5 fw-bolder">{{object.name}}</h3>
+                <div class="fs-5 mb-5">
+                    {%if object.price_before_discount == 0%}
+                    <span class="text-decoration-line-through"> 
+                        {{object.price_min}} {{object.currency}}
+                    </span>
+                    {%else%}
+                    <span class="text-decoration-line-through">
+                        <del>{{object.price_before_discount}}</del>
+                        <br>   
+                        <strong>{{object.price_min}}</strong> {{object.currency}}
+                    </span>
+                    <p>Discount: {{object.show_discount}}%</p>
+                    {%endif%}
+                </div>
+                <p style="-webkit-text-fill-color: blue;" id="stock-check">
+                  {% get_object_property_dinamically cart object.itemid %}
+                </p>
+                <p class="lead">Stock: {{object.stock}}</p><p>{{object.historical_sold}} sold</p>
+                <div class="row py-3 shadow-5">
+                {%for image in object.images.all%}
+                      <div class="col-3 mt-1">
+                        <img
+                          src="https://cf.shopee.vn/file/{{image.image}}"
+                          data-mdb-img="https://mdbcdn.b-cdn.net/img/Photos/Horizontal/E-commerce/Vertical/14a.webp"
+                          alt="Gallery image 1"
+                          class="active w-100" 
+                          onclick="myFunction(this);"
+                        />
+                      </div>
+                      {%endfor%}
+                    </div>
+               
+                <form class="d-flex" id="cart-update" >
+                    <input class="form-control text-center me-1" 
+                    id="inputQuantity" type="number" style="max-width: 4rem"
+                    min="0" max="{{object.stock}}"/>
+                    <button 
+                    class="btn btn-outline-dark flex-shrink-0 cart-update-btn" 
+                    type="submit" 
+                    value="{{object.itemid}}" 
+                    >
+                        <i class="bi-cart-fill me-1"></i>
+                        Add to cart
+                    </button>
+                    <button 
+                    class="btn btn-outline-dark flex-shrink-0 cart-del-btn"  
+                    value="{{object.itemid}}" 
+                    >
+                        <i class="bi-cart-fill me-1"></i>
+                        Remove from cart
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+</section>
+<section class="py-5 bg-light">
+  <div class="container px-4 px-lg-5 mt-5">
+      <h2 class="fw-bolder mb-4">Related products</h2>
+      <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+        {%for obj in related%}
+          <div class="col mb-5">
+              <div class="card h-100">
+                  <!-- Product image-->
+                  <img class="card-img-top" src="https://cf.shopee.vn/file/{{obj.avatar}}" alt="..." />
+                  <!-- Product details-->
+                  <div class="card-body p-4">
+                      <div class="text-center">
+                          <!-- Product name-->
+                          <h5 class="fw-bolder"><a href="{{obj.get_absolute_url}}">{{obj.name}}</a></h5>
+                          <!-- Product price-->
+                        {{obj.price}}
+                      </div>
+                  </div>
+                  <!-- Product actions-->
+                  <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                      <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Add to cart</a></div>
+                  </div>
+              </div>
+          </div>
+          {%endfor%}
+         
+      </div>
+  </div>
+</section>
+<script>
+function myFunction(imgs) {
+  // Get the expanded image
+  var expandImg = document.getElementById("expandedImg");
+  expandImg.src = imgs.src;
+  expandImg.parentElement.style.display = "block";
+}
+</script>
+<script>
+  $(document).on('submit','#cart-update', function(e) {
+    e.preventDefault();
+    $.ajax({
+      type: 'POST',
+      url: '{% url "cart:cartup" %}',
+      data: {
+        itemid: $('.cart-update-btn').val(),
+        qty: $('#inputQuantity').val(),
+        csrfmiddlewaretoken: "{{ csrf_token }}",
+        action: 'post'
+      },
+      success: function (json) {
+        document.getElementById("cart-qty").innerHTML = json.qty;
+        document.getElementById("stock-check").innerHTML = json.itemqty;
+      },
+      error: function (xhr,errmsg, err) {}
+    });
+  })
+</script>
+
+<script>
+  $('.cart-del-btn').on('click', function (e) {
+        e.preventDefault();
+        $.ajax({
+          type: 'POST',
+          url: '{% url "cart:cartdel" %}',
+          data: {
+            itemid: $('.cart-del-btn').val(),
+            csrfmiddlewaretoken: "{{csrf_token}}",
+            action: 'postfromproduct'
+          },
+          success: function (json) {
+            document.getElementById("stock-check").innerHTML = json.itemqty;
+            document.getElementById("cart-qty").innerHTML = json.qty;
+          },
+          error: function (xhr, errmsg, err) {}
+        });
+      })
+</script>
+{%endblock%}
+  <!-- end product section -->
+  <!-- end info_section -->
+

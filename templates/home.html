@@ -1,0 +1,129 @@
+{%extends 'base.html'%}
+{%load static%}
+{% load customtag %}
+
+{%block content%}
+
+    <!-- end header section -->
+    <!-- slider section -->
+    <section class="slider_section ">
+      <div id="customCarousel1" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <div class="container ">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="detail-box">
+                    <h1>
+                      Welcome to our shop
+                    </h1>
+                    <p>
+                      Gundam xách tay, giá rẻ
+                    </p>
+                    <a href="https://shopee.vn/chukongngai">
+                      View on Shopee
+                    </a>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="img-box">
+                    <img src="https://cf.shopee.vn/file/76b3a0f93aeabd108b3a4b20d3e580cd" alt="">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </section>
+    <!-- end slider section -->
+
+
+
+  <!-- product section -->
+
+  <section class="product_section layout_padding">
+    <div class="container">
+      <div class="heading_container heading_center">
+        <h2>
+          Our Products
+        </h2>
+      </div>
+      
+      <div class="row">
+        {%for item in shopeeitem_list%}
+        <div class="col-sm-6 col-lg-4">
+          <div class="box">
+            <div class="img-box">
+              <img src="https://cf.shopee.vn/file/{{item.avatar}}" alt="">
+              <button class="add_cart_btn" data-id="{{item.itemid}}" data-qty="1" data-stock="{{item.stock}}" onclick="">
+                {%csrf_token%}
+                <span>
+                  Add To Cart
+                </span>
+              </button>
+            </div>
+            <div class="detail-box">
+              <span><h5>
+                <a href="{{item.get_absolute_url}}">{{item.name}}</a>
+              </h5>
+              <div class="star_container">
+                <p class="stock-check" id="stock-check{{item.itemid}}" style="-webkit-text-fill-color: blue;">
+                  {% get_object_property_dinamically cart item.itemid %}
+                </p>
+                <p class="stock-check" id="stock-out{{item.itemid}}"></p>
+              </div></span>
+              <div class="product_info">
+                <h5>
+                  {{item.price}} {{item.currency}}
+                </h5>
+                
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {%endfor%}
+      </div>
+      <div class="btn_box">
+        <a href="" class="view_more-link">
+          View More
+        </a>
+      </div>
+    </div>
+    
+  </section>
+  <script>
+    $('.add_cart_btn').on('click', function(e) {
+      e.preventDefault();
+      var data = $(this).data()
+      $.ajax({
+        type: 'POST',
+        url: '{% url "cart:cartadd" %}',
+        data: {
+          itemid: data.id,
+          qty: data.qty,
+          csrfmiddlewaretoken: "{{ csrf_token }}",
+          action: 'post'
+        },
+        success: function (json) {
+          // $('.stock-check[id="' + data.id + '"]').innerHTML;
+          document.getElementById("cart-qty").innerHTML = json.qty;
+          document.getElementById("stock-check"+data.id).innerHTML = json.itemqty;
+          document.getElementById("stock-out"+data.id).innerHTML = json.stock;
+        },
+        error: function (xhr,errmsg, err) {}
+      });
+    })
+  </script>
+  <!-- end product section -->
+
+  <!-- about section -->
+  <!-- end about section -->
+
+  <!-- why us section -->
+
+
+ 
+{%endblock%}

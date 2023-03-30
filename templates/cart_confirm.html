@@ -1,0 +1,106 @@
+{%extends 'base.html'%}
+{%load humanize%}
+{%block content%}
+
+
+    <section class="h-100 h-custom py-3">
+      <div class="container h-100 py-5 w-500">
+        <div class="row d-flex justify-content-center align-items-center h-100 py-3">
+          <div class="col">
+            <ol class="list-group list-group-light list-group-numbered py-3">
+              <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                  <div class="fw-bold"><b>Confirmation email have sent, please check your inbox or spam folders</b>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                  <div class="fw-bold"><b>Name</b></div>
+                  {{order.name}}
+                </div>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                  <div class="fw-bold"><b>Email</b></div>
+                  {{order.email}}
+                </div>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                  <div class="fw-bold"><b>Address</b></div>
+                  {{order.address}}
+                </div>
+                <span class="badge badge-primary rounded-pill"></span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                  <div class="fw-bold"><b>Order Date</b></div>
+                  {{order.created}}
+                </div>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                  <div class="fw-bold"><b>Total</b></div>
+                  {{order.totalcost|intcomma}} đ
+                </div>
+              </li>
+            </ol>
+          </span>
+            <div class="table-responsive h-100">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col" class="h5" >Your cart:</th>
+                    <th class="align-middle" scope="col">Quantity</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Subtotal</th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for item in order.items.all %}
+                  {% with product=item.itemid %}    
+                  <tr class="cart-product" data-index="{{product.itemid}}">
+                    {%csrf_token%}
+                    <th scope="row">
+                      <div class="d-flex align-items-center">
+                        <img src="https://cf.shopee.vn/file/{{product.avatar}}" class="img-fluid rounded-3"
+                          style="width: 100px;" alt="Book">
+                        <div class="flex-column ms-4 py-1 px-1">
+                          <p class="mb-2"><a href="{{product.get_absolute_url}}">{{product.name}}</a></p>
+                        </div>
+                      </div>
+                    </th>
+                    <td class="align-middle">
+                      
+                      <p class="mb-0" style="font-weight: 500;">{{item.quantity}} <br>
+                        <span style="-webkit-text-fill-color: blueviolet;">Stock: {{product.stock}}</span></p>
+                      
+                    </td>
+                    <td class="align-middle">
+                      <div class="d-flex flex-row">
+                        <p class="mb-0" style="font-weight: 500;"> {%if product.show_discount == 0 %}
+                          {{product.price|intcomma}} đ
+                          {%else%}
+                          <del>{{product.price_before_discount}}</del><br>
+                          {{product.price|intcomma}} đ
+                          {%endif%}
+                          </p>
+                      </div>
+                    </td>
+                    <td class="align-middle">
+                      <p class="mb-0" style="font-weight: 500;">
+                       {{item.subtotal|intcomma}} đ
+                      </p>
+                    </td>
+                  </tr>
+                  {% endwith %}
+                  {% endfor %}
+                  
+                </tbody>
+              </table>
+            </div>
+        </div>
+      </div>
+    </section>
+    
+{%endblock%}

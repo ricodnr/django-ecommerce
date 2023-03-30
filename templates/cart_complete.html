@@ -1,0 +1,71 @@
+{%extends 'base.html'%}
+{%load humanize%}
+{%block content%}
+
+
+    <section class="h-100 h-custom py-3">
+      <div class="container h-100 py-5 w-500">
+        <div class="row d-flex justify-content-center align-items-center h-100 py-3">
+          <div class="col">
+            <ol class="list-group list-group-light list-group-numbered py-3">
+              <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                  <div class="fw-bold"><b>Thanks for shopping</b>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                  <div class="fw-bold"><b>Name</b></div>
+                  {{order.name}}
+                </div>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                  <div class="fw-bold"><b>Email</b></div>
+                  {{order.email}}
+                </div>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                  <div class="fw-bold"><b>Address</b></div>
+                  {{order.address}}
+                </div>
+                <span class="badge badge-primary rounded-pill"></span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                  <div class="fw-bold"><b>Order Date</b></div>
+                  {{order.created}}
+                </div>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                  <table>
+                    <tr>
+                      <th>Item</th>
+                      <th class="px-4">Quantity</th>
+                      <th class="px-4">Price</th>
+                      <th></th>
+                    </tr>
+                    {%for item in order.items.all %}
+                    <tr>
+                      <td><a href="{{item.itemid.get_absolute_url}}">{{item.itemid.name}}</a></td>
+                      <td class="px-4">{{item.quantity}}</td>
+                      <td class="px-4">{{item.price|intcomma}} {{item.itemid.currency}}</td>
+                      <td><img width="80" height="80" src="https://cf.shopee.vn/file/{{item.itemid.avatar}}_tn" alt=""></td>
+                    </tr>
+                    {%endfor%}
+                  </table>
+                </div>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                  <div class="fw-bold"><b>Total</b></div>
+                  {{order.totalcost|intcomma}} đ
+                </div>
+              </li>
+            </ol>
+        </div>
+      </div>
+    </section>
+    
+{%endblock%}

@@ -1,5 +1,6 @@
 {%extends 'base.html'%}
 {%load static%}
+{%load humanize%}
 {% load customtag %}
 
 {%block content%}
@@ -57,41 +58,47 @@
           <div class="box">
             <div class="img-box">
               <img src="https://cf.shopee.vn/file/{{item.avatar}}" alt="">
-              <button class="add_cart_btn" data-id="{{item.itemid}}" data-qty="1" data-stock="{{item.stock}}" onclick="">
+              <button class="btn btn-outline-dark py-0 flex-shrink-0 add_cart_btn" data-id="{{item.itemid}}" data-qty="1" data-stock="{{item.stock}}">
                 {%csrf_token%}
-                <span>
+
                   Add To Cart
-                </span>
+
               </button>
             </div>
             <div class="detail-box">
               <span><h5>
                 <a href="{{item.get_absolute_url}}">{{item.name}}</a>
               </h5>
+              <div class="product_info">
+                {%if item.price_before_discount == 0%}
+                    <h4 class="text-decoration-line-through"> 
+                        {{item.price_min|intcomma}} {{item.currency}}
+                    </h4>
+                    {%else%}
+                    <h4 class="text-decoration-line-through">
+                        <del>{{item.price_before_discount|intcomma}}</del>
+                        <br>   
+                        <strong>{{item.price_min|intcomma}}</strong> {{item.currency}}
+                    </h4>
+                    {%endif%}
+                    <button class="btn btn-outline-dark mt-auto cart-del" 
+                    id="delete-button" data-id="{{item.itemid}}" onclick="">
+                      del</button>
+              </div>
               <div class="star_container">
-                <p class="stock-check" id="stock-check{{item.itemid}}" style="-webkit-text-fill-color: blue;">
+                <span class="d-flex justify-content-between"><p class="stock-check" id="stock-check{{item.itemid}}" style="-webkit-text-fill-color: blue;">
                   {% get_object_property_dinamically cart item.itemid %}
-                </p>
+                </p>{% is_item_incart cart item.itemid as item_flag%}
+                </span>
                 <p class="stock-check" id="stock-out{{item.itemid}}"></p>
               </div></span>
-              <div class="product_info">
-                <h5>
-                  {{item.price}} {{item.currency}}
-                </h5>
-                
-              </div>
+              
             </div>
           </div>
         </div>
 
         {%endfor%}
-      </div>
-      <div class="btn_box">
-        <a href="" class="view_more-link">
-          View More
-        </a>
-      </div>
-    </div>
+     
     
   </section>
   <script>
@@ -117,6 +124,28 @@
       });
     })
   </script>
+
+<script>
+  $('.cart-del').on('click',function(e){
+    e.preventDefault();
+    var data = $(this).data()
+    $.ajax({
+      type: 'POST',
+      url: '{%url "cart:cartdel"%}',
+      data: {
+            itemid: data.id,
+            csrfmiddlewaretoken: "{{csrf_token}}",
+            action: 'postfromproduct'
+          },
+      success: function (json) {
+            document.getElementById("stock-check"+data.id).innerHTML = json.itemqty;
+            document.getElementById("cart-qty").innerHTML = json.qty;
+          },
+      error: function (xhr, errmsg, err) {}
+        });
+    })
+
+</script>
   <!-- end product section -->
 
   <!-- about section -->

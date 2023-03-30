@@ -1,20 +1,21 @@
 {%extends 'base.html'%}
+{%load humanize%}
 {%block content%}
 
 
     <section class="h-100 h-custom">
       <div class="container h-100 py-5 w-500">
-        <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100 py-5">
           <div class="col">
     
             <div class="table-responsive">
               <table class="table">
                 <thead>
                   <tr>
-                    <th scope="col" class="h5">Your cart: <span id="cart-qty">{{cart|length}}</span></th>
+                    <th scope="col" class="h5" >Your cart:</th>
                     <th class="align-middle" scope="col">Quantity</th>
-                    <th scope="col">Discount</th>
                     <th scope="col">Price</th>
+                    <th scope="col">Subtotal</th>
                     <th scope="col"></th>
                   </tr>
                 </thead>
@@ -40,20 +41,21 @@
                     </td>
                     <td class="align-middle">
                       <div class="d-flex flex-row">
-                        <p class="mb-0" style="font-weight: 500;">{{product.show_discount}}%</p>
+                        <p class="mb-0" style="font-weight: 500;"> {%if product.show_discount == 0 %}
+                          {{product.price|intcomma}} đ
+                          {%else%}
+                          <del>{{product.price_before_discount}}</del><br>
+                          {{product.price|intcomma}} đ
+                          {%endif%}
+                          </p>
                       </div>
                     </td>
                     <td class="align-middle">
                       <p class="mb-0" style="font-weight: 500;">
-                        {%if product.show_discount == 0 %}
-                        {{product.price}} đ
-                        {%else%}
-                        <del>{{product.price_before_discount}}</del><br>
-                        {{product.price}} đ
-                        {%endif%}
+                       {{item.subtotal|intcomma}} đ
                       </p>
                     </td>
-                    <td class="align-middle"><button class="cart-del" id="delete-button" data-index="{{product.itemid}}" onclick="">
+                    <td class="align-middle"><button class="btn btn-outline-dark mt-auto cart-del" id="delete-button" data-index="{{product.itemid}}" onclick="">
                       del</button></td>
                   </tr>
                   {% endwith %}
@@ -62,15 +64,24 @@
                 </tbody>
               </table>
             </div>
-    
-            <button type="button" class="btn btn-primary btn-block btn-lg">
+            <form method="post" action="">{%csrf_token%}
+              <!-- <div class="form-group">
+                <label for="exampleInputEmail1">Email address</label>
+                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+              </div>
+              <div class="form-group">
+                <label for="exampleInputPassword1">Shipping Address</label>
+                <input type="email" class="form-control" id="exampleInputPassword1" placeholder="Email">
+              </div> -->
+              {{form.as_p}}
+            <button class="btn btn-primary btn-block btn-lg" type="submit">
               <div class="d-flex justify-content-between">
-                
-                <span></span>
-                <span id="subtotal">{{cart.get_total_price}}</span>
+                <span>Checkout</span>
+                <span id="subtotal">{{cart.get_total_price|intcomma}} đ</span>
               </div>
               </button>
-    
+            </form>
           </div>
         </div>
       </div>

@@ -1,5 +1,6 @@
 {% load static %}
 {% load customtag %}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -49,26 +50,17 @@
           </button>
         
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-             
         </div>
-        <from class="search_form">
-            <input type="text" class="form-control" placeholder="Search here...">
-            <button class="" type="submit">
-                <i class="fa fa-search" aria-hidden="true"></i>
-            </button>
-        </from>
-        <div class="user_option_box">
-            <a href="" class="account-link">
-                <i class="fa fa-user" aria-hidden="true"></i>
-                <span>My Account</span>
-            </a>
+
+        <from class="user_option_box">
+            
             <a href="{%url 'cart:cart'%}" class="cart-link">
                 <i class="fa fa-shopping-cart" aria-hidden="true"></i>
-                <span>Cart</span><div id="cart-qty">{%if cart|length > 0%}{{cart|length}}
+                <span>Cart<span id="cart-qty">{%if cart|length > 0%}{{cart|length}}
                   {%endif%}
-                </div>
+                </span></span>
             </a>
-        </div>
+          </from>
       </nav>
     </div>
     </div>
@@ -90,15 +82,11 @@
             </h5>
             <p>
               <i class="fa fa-map-marker" aria-hidden="true"></i>
-              Address
-            </p>
-            <p>
-              <i class="fa fa-phone" aria-hidden="true"></i>
-              +01 1234567890
+              TPHCM
             </p>
             <p>
               <i class="fa fa-envelope" aria-hidden="true"></i>
-              demo@gmail.com
+              nsphuc244@gmail.com
             </p>
           </div>
         </div>
@@ -108,71 +96,12 @@
               Information
             </h5>
             <p>
-              Eligendi sunt, provident, debitis nemo, facilis cupiditate velit libero dolorum aperiam enim nulla iste maxime corrupti ad illo libero minus.
+              Made by seafood, using Django framework. For all employers in need, hire me please via e-mail or mobile: +84393397979
             </p>
           </div>
         </div>
-        <div class="col-md-3">
-          <div class="info_links">
-            <h5>
-              Useful Link
-            </h5>
-            <ul>
-              <li>
-                <a href="index.html">
-                  Home
-                </a>
-              </li>
-              <li>
-                <a href="about.html">
-                  About
-                </a>
-              </li>
-              <li>
-                <a href="product.html">
-                  Products
-                </a>
-              </li>
-              <li>
-                <a href="why.html">
-                  Why Us
-                </a>
-              </li>
-              <li>
-                <a href="testimonial.html">
-                  Testimonial
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="info_form ">
-            <h5>
-              Newsletter
-            </h5>
-            <form action="">
-              <input type="email" placeholder="Enter your email">
-              <button>
-                Subscribe
-              </button>
-            </form>
-            <div class="social_box">
-              <a href="">
-                <i class="fa fa-facebook" aria-hidden="true"></i>
-              </a>
-              <a href="">
-                <i class="fa fa-twitter" aria-hidden="true"></i>
-              </a>
-              <a href="">
-                <i class="fa fa-instagram" aria-hidden="true"></i>
-              </a>
-              <a href="">
-                <i class="fa fa-youtube" aria-hidden="true"></i>
-              </a>
-            </div>
-          </div>
-        </div>
+      
+        
       </div>
     </div>
   </section>
@@ -184,7 +113,7 @@
   <footer class="footer_section">
     <div class="container">
       <p>
-        &copy; <span id="displayYear"></span> All Rights Reserved By
+        &copy; <span id="displayYear"></span> Template By
         <a href="https://html.design/">Free Html Templates</a>
       </p>
     </div>
